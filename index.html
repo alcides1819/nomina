@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Calculadora de Nómina</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9fb;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    form {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    label {
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    table {
+      width: 100%;
+      margin-top: 30px;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background: #007bff;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <h1>Calculadora de Nómina</h1>
+  <form id="nominaForm">
+    <label>Nombre del Empleado:</label>
+    <input type="text" id="nombre" required>
+
+    <label>Salario Base Mensual:</label>
+    <input type="number" id="salarioBase" required>
+
+    <label>Horas Extra Diurnas:</label>
+    <input type="number" id="hed" value="0">
+
+    <label>Horas Extra Nocturnas:</label>
+    <input type="number" id="hen" value="0">
+
+    <label>Horas Extra Dominical/Festiva Diurnas:</label>
+    <input type="number" id="hedd" value="0">
+
+    <label>Horas Extra Dominical/Festiva Nocturnas:</label>
+    <input type="number" id="hend" value="0">
+
+    <label>Descuentos (salud, pensión, otros):</label>
+    <input type="number" id="descuentos" value="0">
+
+    <button type="submit">Calcular Nómina</button>
+  </form>
+
+  <table id="resultadoTabla">
+    <thead>
+      <tr>
+        <th>Empleado</th>
+        <th>Salario Base</th>
+        <th>Total Horas Extras</th>
+        <th>Descuentos</th>
+        <th>Salario Neto</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    document.getElementById("nominaForm").addEventListener("submit", function(e){
+      e.preventDefault();
+
+      const nombre = document.getElementById("nombre").value;
+      const salarioBase = parseFloat(document.getElementById("salarioBase").value);
+      const hed = parseFloat(document.getElementById("hed").value);
+      const hen = parseFloat(document.getElementById("hen").value);
+      const hedd = parseFloat(document.getElementById("hedd").value);
+      const hend = parseFloat(document.getElementById("hend").value);
+      const descuentos = parseFloat(document.getElementById("descuentos").value);
+
+      // Valor hora legal en Colombia (240 horas promedio/mes)
+      const valorHora = salarioBase / 240;
+
+      // Cálculo de recargos
+      const pagoHED = hed * valorHora * 1.25;   // 125%
+      const pagoHEN = hen * valorHora * 1.75;   // 175%
+      const pagoHEDD = hedd * valorHora * 2.00; // 200%
+      const pagoHEND = hend * valorHora * 2.50; // 250%
+
+      const totalExtras = pagoHED + pagoHEN + pagoHEDD + pagoHEND;
+
+      const salarioNeto = salarioBase + totalExtras - descuentos;
+
+      const tabla = document.getElementById("resultadoTabla").querySelector("tbody");
+      const fila = document.createElement("tr");
+
+      fila.innerHTML = `
+        <td>${nombre}</td>
+        <td>$${salarioBase.toFixed(2)}</td>
+        <td>$${totalExtras.toFixed(2)}</td>
+        <td>$${descuentos.toFixed(2)}</td>
+        <td><strong>$${salarioNeto.toFixed(2)}</strong></td>
+      `;
+
+      tabla.appendChild(fila);
+
+      document.getElementById("nominaForm").reset();
+    });
+  </script>
+</body>
+</html>
